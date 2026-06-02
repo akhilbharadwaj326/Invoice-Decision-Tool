@@ -1,6 +1,7 @@
 # =============================================================================
 # INVOICE DECISION TOOL — .gitignore
 # Security-hardened for React (Frontend) + Python FastAPI (Backend)
+# Deployment: Replit (NO Docker — Replit uses Nix environment)
 # =============================================================================
 
 
@@ -289,16 +290,16 @@ $RECYCLE.BIN/
 
 
 # =============================================================================
-# DOCKER
+# DOCKER — NOT USED (Replit uses Nix, not Docker)
 # =============================================================================
-
-# Do NOT ignore docker-compose.yml or Dockerfile — they are needed
-# DO ignore environment files used with Docker
+# Docker is not supported on Replit. No Dockerfile or docker-compose.yml
+# will be present in this project.
+# If migrating to Railway/Render in Phase 2, re-enable Docker support.
+#
+# Ignoring these just in case of accidental creation:
 docker-compose.override.yml
 .docker/
 docker-data/
-
-# Docker volumes mounted locally
 postgres_data/
 redis_data/
 minio_data/
