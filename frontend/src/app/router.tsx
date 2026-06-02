@@ -2,14 +2,9 @@ import { createBrowserRouter } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { Login } from '@/pages/Login';
 import { Signup } from '@/pages/Signup';
-
-// Placeholder for Dashboard
-const Dashboard = () => (
-  <div className="space-y-6">
-    <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-    <p className="text-muted-foreground">Welcome to the Invoice Decision Tool.</p>
-  </div>
-);
+import { Dashboard } from '@/pages/Dashboard';
+import { InvoiceListPage } from '@/pages/InvoiceListPage';
+import { InvoiceUploadPage } from '@/pages/InvoiceUploadPage';
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +22,14 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Dashboard />,
+      },
+      {
+        path: 'invoices',
+        element: <InvoiceListPage />,
+      },
+      {
+        path: 'invoices/upload',
+        element: <InvoiceUploadPage />,
       },
       // Other protected routes will be added here
     ],
