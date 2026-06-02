@@ -6,6 +6,9 @@ import { Dashboard } from '@/pages/Dashboard';
 import { InvoiceListPage } from '@/pages/InvoiceListPage';
 import { InvoiceUploadPage } from '@/pages/InvoiceUploadPage';
 import { InvoiceDetailPage } from '@/pages/InvoiceDetailPage';
+import { ReportsPage } from '@/pages/ReportsPage';
+import { UsersPage } from '@/pages/admin/UsersPage';
+import { RulesPage } from '@/pages/admin/RulesPage';
 
 export const router = createBrowserRouter([
   {
@@ -36,7 +39,18 @@ export const router = createBrowserRouter([
         path: 'invoices/:id',
         element: <InvoiceDetailPage />,
       },
-      // Other protected routes will be added here
+      {
+        path: 'reports',
+        element: <ReportsPage />,
+      },
+      {
+        path: 'admin/users',
+        element: <UsersPage />,
+      },
+      {
+        path: 'admin/rules',
+        element: <RulesPage />,
+      },
     ],
   },
   {
