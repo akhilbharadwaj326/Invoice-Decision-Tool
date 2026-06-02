@@ -1,0 +1,410 @@
+# =============================================================================
+# INVOICE DECISION TOOL — .gitignore
+# Security-hardened for React (Frontend) + Python FastAPI (Backend)
+# =============================================================================
+
+
+# =============================================================================
+# !! SECURITY CRITICAL — NEVER COMMIT THESE !!
+# =============================================================================
+
+# Environment variable files — contain API keys, DB passwords, secrets
+.env
+.env.*
+!.env.example          # ONLY the example template is allowed
+.envrc
+
+# Secret keys & certificates
+*.pem
+*.key
+*.crt
+*.cer
+*.pfx
+*.p12
+*.p8
+secrets/
+certs/
+keys/
+private/
+
+# API key files
+*_api_key*
+*_secret*
+api_keys.txt
+credentials.json
+service_account.json
+token.json
+
+# Replit secrets file (auto-generated, contains secrets)
+.replit.nix.secrets
+replit-secrets.json
+
+# SSH keys (should never be in a project repo)
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+*.ppk
+
+# JWT / Auth tokens
+*.token
+auth_token*
+refresh_token*
+
+# Database credentials / dumps with data
+*.sql.gz
+db_dump.sql
+backup_*.sql
+
+
+# =============================================================================
+# PYTHON / BACKEND
+# =============================================================================
+
+# Byte-compiled / optimized Python files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Virtual environments — NEVER commit these
+.venv/
+venv/
+env/
+ENV/
+.env/
+virtualenv/
+.python-version
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+MANIFEST
+.eggs/
+wheels/
+
+# PyInstaller
+*.spec
+
+# Unit test / coverage reports
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+nosetests.xml
+test-results/
+junit.xml
+*.coveragerc
+
+# Type checking cache
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+pyrightconfig.json
+
+# Linting / formatting cache
+.ruff_cache/
+.flake8
+.pylintrc.bak
+
+# Jupyter Notebooks (if any)
+.ipynb_checkpoints/
+*.ipynb
+
+# Alembic — keep migration scripts, ignore compiled
+*.pyc
+
+# FastAPI / Uvicorn logs
+uvicorn.log
+access.log
+error.log
+
+# Celery (future use)
+celerybeat-schedule
+celerybeat.pid
+
+# Local SQLite databases (use only for local dev, not for shared data)
+*.db
+*.sqlite
+*.sqlite3
+
+# PDF processing temp files
+/tmp/
+temp/
+*.tmp
+
+
+# =============================================================================
+# NODE.JS / REACT FRONTEND
+# =============================================================================
+
+# Dependencies
+node_modules/
+jspm_packages/
+bower_components/
+
+# Build output
+dist/
+build/
+.next/
+out/
+.nuxt/
+.output/
+
+# Vite build cache
+.vite/
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.npm/
+
+# Testing
+coverage/
+.nyc_output/
+cypress/videos/
+cypress/screenshots/
+playwright-report/
+playwright/.cache/
+
+# Type generation output
+*.tsbuildinfo
+
+# Optional caches
+.eslintcache
+.stylelintcache
+.parcel-cache/
+.turbo/
+
+# Local env files (frontend)
+*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+
+# =============================================================================
+# IDEs & EDITORS
+# =============================================================================
+
+# Visual Studio Code (keep .vscode/extensions.json and settings — comment out if sharing)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+
+# IntelliJ IDEA / PyCharm / WebStorm
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+# Eclipse
+.classpath
+.project
+.settings/
+*.launch
+
+# Vim
+*.swp
+*.swo
+*~
+Session.vim
+.netrwhist
+
+# Emacs
+*#
+.#*
+\#*#
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# TextMate
+*.tmproj
+*.tmproject
+tmtags
+
+
+# =============================================================================
+# OPERATING SYSTEM
+# =============================================================================
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+Icon
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+
+# =============================================================================
+# DOCKER
+# =============================================================================
+
+# Do NOT ignore docker-compose.yml or Dockerfile — they are needed
+# DO ignore environment files used with Docker
+docker-compose.override.yml
+.docker/
+docker-data/
+
+# Docker volumes mounted locally
+postgres_data/
+redis_data/
+minio_data/
+
+
+# =============================================================================
+# REPLIT
+# =============================================================================
+
+# Replit auto-generated files (not needed in source control)
+.replit              # Keep if you want Replit config — remove this line if so
+replit.nix           # Nix environment — keep if needed for Replit builds
+.upm/
+.config/
+.cache/
+.local/
+
+
+# =============================================================================
+# LOGS & MONITORING
+# =============================================================================
+
+logs/
+*.log
+*.log.*
+log/
+application.log
+server.log
+debug.log
+
+
+# =============================================================================
+# CLOUD & DEPLOYMENT ARTIFACTS
+# =============================================================================
+
+# Terraform (future infrastructure-as-code)
+*.tfstate
+*.tfstate.backup
+*.tfvars
+!*.tfvars.example
+.terraform/
+.terraform.lock.hcl
+
+# Serverless Framework
+.serverless/
+
+# AWS / GCP / Azure credentials (belt-and-suspenders)
+.aws/
+.gcp/
+.azure/
+aws_credentials
+gcp_credentials.json
+
+
+# =============================================================================
+# TEST & GENERATED DATA
+# =============================================================================
+
+# Sample invoice files used during testing (may contain real data)
+test_invoices/
+sample_data/
+fixtures/real_invoices/
+
+# Generated report files
+reports/generated/
+*.csv.generated
+exports/
+
+
+# =============================================================================
+# MISCELLANEOUS
+# =============================================================================
+
+# Package manager locks (choose one — keep the one your team uses)
+# Uncomment ONE of these if you standardize on a package manager:
+# package-lock.json   # Keep if using npm
+# yarn.lock           # Keep if using yarn
+# pnpm-lock.yaml      # Keep if using pnpm
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# Compressed archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Binary uploads during development
+uploads/
+uploaded_files/
+invoice_files/
+
+
+# =============================================================================
+# WHAT IS INTENTIONALLY TRACKED (not ignored)
+# =============================================================================
+# ✅ .env.example            — Template with placeholder values only
+# ✅ docker-compose.yml       — Service definitions (no secrets)
+# ✅ Dockerfile               — Build instructions
+# ✅ alembic/                 — Database migration scripts
+# ✅ requirements.txt         — Python dependencies
+# ✅ package.json             — Node dependencies
+# ✅ docs/                    — PRD, BRD, SAD, implementation plan
+# ✅ .github/workflows/       — CI/CD pipelines
+# ✅ README.md                — Project documentation
+# =============================================================================
