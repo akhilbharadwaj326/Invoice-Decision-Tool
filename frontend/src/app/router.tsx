@@ -5,6 +5,7 @@ import { Signup } from '@/pages/Signup';
 import { Dashboard } from '@/pages/Dashboard';
 import { InvoiceListPage } from '@/pages/InvoiceListPage';
 import { InvoiceUploadPage } from '@/pages/InvoiceUploadPage';
+import { InvoiceDetailPage } from '@/pages/InvoiceDetailPage';
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
       {
         path: 'invoices/upload',
         element: <InvoiceUploadPage />,
+      },
+      {
+        path: 'invoices/:id',
+        element: <InvoiceDetailPage />,
       },
       // Other protected routes will be added here
     ],
