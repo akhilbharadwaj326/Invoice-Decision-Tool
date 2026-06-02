@@ -1,7 +1,15 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
+import { AppShell } from '@/components/layout/AppShell';
+import { Login } from '@/pages/Login';
+import { Signup } from '@/pages/Signup';
 
-const Dashboard = () => <div className="p-8"><h1>Dashboard Placeholder</h1></div>;
-const Login = () => <div className="p-8"><h1>Login Placeholder</h1></div>;
+// Placeholder for Dashboard
+const Dashboard = () => (
+  <div className="space-y-6">
+    <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+    <p className="text-muted-foreground">Welcome to the Invoice Decision Tool.</p>
+  </div>
+);
 
 export const router = createBrowserRouter([
   {
@@ -9,11 +17,22 @@ export const router = createBrowserRouter([
     element: <Login />,
   },
   {
+    path: '/signup',
+    element: <Signup />,
+  },
+  {
     path: '/',
-    element: <Dashboard />,
+    element: <AppShell />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+      // Other protected routes will be added here
+    ],
   },
   {
     path: '*',
-    element: <Navigate to="/" replace />,
+    element: <div className="flex h-screen items-center justify-center">404 Not Found</div>,
   },
 ]);
