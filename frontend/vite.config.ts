@@ -10,4 +10,14 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    host: true,        // Bind to 0.0.0.0 — required for Replit & container deployments
+    port: 5173,
+    strictPort: true,
+  },
+  preview: {
+    host: true,        // Also needed for `vite preview` in production preview mode
+    port: 4173,
+    strictPort: true,
+  },
 })
