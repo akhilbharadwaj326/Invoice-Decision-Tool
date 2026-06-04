@@ -6,6 +6,7 @@ Replit     → reads from Replit Secrets (same variable names, zero code change)
 """
 
 from functools import lru_cache
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -51,6 +52,7 @@ class Settings(BaseSettings):
     # Local:  http://localhost:5173
     # Replit: https://your-frontend.replit.app
     FRONTEND_URL: str = "http://localhost:5173"
+    BACKEND_PUBLIC_URL: str = "http://localhost:8000"
 
     # ── File Upload ───────────────────────────────────────────────────────────
     MAX_FILE_SIZE_MB: int = 20
@@ -84,6 +86,12 @@ class Settings(BaseSettings):
     @property
     def has_openai(self) -> bool:
         return bool(self.OPENAI_API_KEY)
+
+    @model_validator(mode="after")
+    def validate_production_secrets(self):
+        if self.is_production and self.SECRET_KEY == "CHANGE_ME_generate_a_64char_hex_string":
+            raise ValueError("SECRET_KEY must be set to a strong secret in production.")
+        return self
 
 
 @lru_cache

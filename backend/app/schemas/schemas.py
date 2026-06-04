@@ -24,6 +24,11 @@ class SignupRequest(BaseModel):
     password: str = Field(min_length=6, max_length=128)
 
 
+class ProfileUpdateRequest(BaseModel):
+    name: str | None = Field(None, min_length=2, max_length=255)
+    password: str | None = Field(None, min_length=6, max_length=128)
+
+
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
@@ -63,6 +68,7 @@ class VendorResponse(OrmBase):
 # ── Invoices ─────────────────────────────────────────────────────────────────
 
 class LineItemSchema(OrmBase):
+    id: uuid.UUID
     line_number: int
     description: str | None
     hsn_sac_code: str | None
@@ -210,6 +216,13 @@ class UserUpdateRequest(BaseModel):
     is_active: bool | None = None
 
 
+class CreateUserRequest(BaseModel):
+    name: str = Field(min_length=2, max_length=255)
+    email: EmailStr
+    password: str = Field(min_length=6, max_length=128)
+    role: str = "REVIEWER"
+
+
 class DashboardStats(BaseModel):
     total_invoices: int
     pending_review: int
@@ -232,6 +245,18 @@ class RiskRuleResponse(OrmBase):
 class RiskRuleUpdateRequest(BaseModel):
     is_active: bool | None = None
     threshold: float | None = None
+    name: str | None = None
+    description: str | None = None
+    severity: str | None = None
+
+
+class RiskRuleCreateRequest(BaseModel):
+    rule_code: str
+    name: str
+    description: str | None = None
+    severity: str
+    threshold: float | None = None
+    is_active: bool = True
 
 
 # ── Generic ──────────────────────────────────────────────────────────────────

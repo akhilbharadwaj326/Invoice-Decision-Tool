@@ -4,6 +4,12 @@ import { UploadCloud, File, X, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useUploadInvoiceMutation } from "@/features/api/invoicesApi";
+
+const isValidFileType = (file: File) => {
+  const validTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+  return validTypes.includes(file.type);
+};
 
 export function InvoiceUploadPage() {
   const navigate = useNavigate();
@@ -12,6 +18,8 @@ export function InvoiceUploadPage() {
   const [uploadStatus, setUploadStatus] = useState<"IDLE" | "UPLOADING" | "SUCCESS" | "ERROR">("IDLE");
   const [progress, setProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [uploadInvoice] = useUploadInvoiceMutation();
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -46,31 +54,28 @@ export function InvoiceUploadPage() {
     }
   };
 
-  const isValidFileType = (file: File) => {
-    const validTypes = ['application/pdf', 'image/jpeg', 'image/png'];
-    return validTypes.includes(file.type);
-  };
-
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (!file) return;
     
     setUploadStatus("UPLOADING");
+    setProgress(50); // Just a simple visual cue since it's a mutation
     
-    // Simulate upload progress
-    let currentProgress = 0;
-    const interval = setInterval(() => {
-      currentProgress += 10;
-      setProgress(currentProgress);
+    const formData = new FormData();
+    formData.append("file", file);
+    
+    try {
+      const result = await uploadInvoice(formData).unwrap();
+      setProgress(100);
+      setUploadStatus("SUCCESS");
       
-      if (currentProgress >= 100) {
-        clearInterval(interval);
-        setUploadStatus("SUCCESS");
-        // In a real app, we'd navigate to the detail page or show success
-        setTimeout(() => {
-          navigate("/invoices");
-        }, 1500);
-      }
-    }, 200);
+      setTimeout(() => {
+        navigate(`/invoices/${result.invoice_id}`);
+      }, 1500);
+    } catch (error) {
+      console.error("Upload failed", error);
+      setUploadStatus("ERROR");
+      setProgress(0);
+    }
   };
 
   const removeFile = () => {

@@ -7,8 +7,10 @@ Routers for auth, invoices, etc. will be mounted in later phases.
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.core.config import get_settings
+from app.services.storage_service import LOCAL_UPLOAD_DIR
 
 settings = get_settings()
 
@@ -29,6 +31,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/uploads", StaticFiles(directory=LOCAL_UPLOAD_DIR), name="uploads")
 
 # ── Health endpoint ───────────────────────────────────────────────────────────
 @app.get("/health", tags=["Health"])

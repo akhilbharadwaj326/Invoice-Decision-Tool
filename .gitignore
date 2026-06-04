@@ -310,8 +310,7 @@ minio_data/
 # =============================================================================
 
 # Replit auto-generated files (not needed in source control)
-.replit              # Keep if you want Replit config — remove this line if so
-replit.nix           # Nix environment — keep if needed for Replit builds
+# Keep .replit and replit.nix in source control for deployment reproducibility.
 .upm/
 .config/
 .cache/

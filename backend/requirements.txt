@@ -18,11 +18,10 @@ pydantic[email]==2.10.3
 pydantic-settings==2.7.0
 
 # Auth — JWT + Password Hashing
-PyJWT==2.10.1
+python-jose==3.3.0
 bcrypt==4.2.1
 
 # AI / OCR
-openai==1.59.3
 PyMuPDF==1.25.1
 python-multipart==0.0.12   # Required for file uploads
 

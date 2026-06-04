@@ -5,7 +5,7 @@ from sqlalchemy.orm import selectinload
 import uuid
 
 from app.core.database import get_db
-from app.core.deps import CurrentUser, require_reviewer
+from app.core.deps import CurrentUser, require_approver
 from app.models.models import Invoice, Decision, User
 from app.schemas.schemas import DecisionRequest, DecisionResponse, MessageResponse
 from app.services.audit_service import log_audit
@@ -17,12 +17,12 @@ router = APIRouter(prefix="/api/invoices", tags=["Decisions"])
 async def make_decision(
     invoice_id: uuid.UUID,
     payload: DecisionRequest,
-    current_user: User = Depends(require_reviewer()),
+    current_user: User = Depends(require_approver()),
     db: AsyncSession = Depends(get_db)
 ):
     """
     Make a final decision on an invoice (APPROVED, REJECTED, ON_HOLD).
-    Requires REVIEWER or ADMIN role.
+    Requires APPROVER or ADMIN role.
     """
 
     valid_decisions = ["APPROVED", "REJECTED", "ON_HOLD"]

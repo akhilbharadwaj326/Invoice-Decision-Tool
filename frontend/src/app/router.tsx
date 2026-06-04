@@ -7,6 +7,7 @@ import { InvoiceListPage } from '@/pages/InvoiceListPage';
 import { InvoiceUploadPage } from '@/pages/InvoiceUploadPage';
 import { InvoiceDetailPage } from '@/pages/InvoiceDetailPage';
 import { ReportsPage } from '@/pages/ReportsPage';
+import { SettingsPage } from '@/pages/SettingsPage';
 import { UsersPage } from '@/pages/admin/UsersPage';
 import { RulesPage } from '@/pages/admin/RulesPage';
 
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
       {
         path: 'reports',
         element: <ReportsPage />,
+      },
+      {
+        path: 'settings',
+        element: <SettingsPage />,
       },
       {
         path: 'admin/users',

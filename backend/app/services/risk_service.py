@@ -67,7 +67,7 @@ async def generate_ai_summary(invoice: Invoice, flags: list[str]) -> tuple[str, 
     
     Provide a JSON response with two keys:
     1. 'ai_summary': A 1-2 sentence explanation of the risk profile.
-    2. 'recommendation': "APPROVE", "REVIEW", or "REJECT".
+    2. 'recommendation': "APPROVE", "REVIEW", or "DECLINE".
     """
     
     try:

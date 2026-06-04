@@ -7,9 +7,10 @@ Otherwise, falls back to saving files locally in `backend/uploads/`.
 """
 
 import os
+import tempfile
 import uuid
 import aiofiles
-from fastapi import UploadFile
+from fastapi import HTTPException, UploadFile
 
 from app.core.config import get_settings
 
@@ -36,11 +37,18 @@ async def upload_file(file: UploadFile, invoice_id: uuid.UUID) -> str:
     """
     ext = file.filename.split(".")[-1].lower() if file.filename and "." in file.filename else "pdf"
     filename = f"{invoice_id}.{ext}"
+    file_bytes = await file.read()
+    max_size = settings.MAX_FILE_SIZE_MB * 1024 * 1024
+
+    if len(file_bytes) > max_size:
+        raise HTTPException(
+            status_code=413,
+            detail=f"File exceeds {settings.MAX_FILE_SIZE_MB}MB limit.",
+        )
 
     if supabase_client:
         # Upload to Supabase Storage
-        file_bytes = await file.read()
-        res = supabase_client.storage.from_(settings.SUPABASE_BUCKET).upload(
+        supabase_client.storage.from_(settings.SUPABASE_BUCKET).upload(
             path=filename,
             file=file_bytes,
             file_options={"content-type": file.content_type}
@@ -50,8 +58,7 @@ async def upload_file(file: UploadFile, invoice_id: uuid.UUID) -> str:
         # Fallback: Save locally
         file_path = os.path.join(LOCAL_UPLOAD_DIR, filename)
         async with aiofiles.open(file_path, 'wb') as out_file:
-            content = await file.read()
-            await out_file.write(content)
+            await out_file.write(file_bytes)
         return file_path
 
 
@@ -66,6 +73,23 @@ async def get_file_url(file_path: str) -> str:
         )
         return res.get("signedURL", "")
     
-    # For local fallback, we could serve static files via FastAPI in a real scenario
-    # or just return the local file path
-    return file_path
+    local_path = file_path.replace("\\", "/")
+    return f"{settings.BACKEND_PUBLIC_URL.rstrip('/')}/{local_path}"
+
+
+async def materialize_file(file_path: str) -> tuple[str, str | None]:
+    """
+    Returns a local filesystem path for OCR. Supabase objects are downloaded
+    to a temporary file; local fallback paths are returned unchanged.
+    """
+    if os.path.exists(file_path):
+        return file_path, None
+
+    if not supabase_client:
+        raise FileNotFoundError(f"File {file_path} not found locally.")
+
+    file_bytes = supabase_client.storage.from_(settings.SUPABASE_BUCKET).download(file_path)
+    suffix = os.path.splitext(file_path)[1] or ".pdf"
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(file_bytes)
+        return tmp.name, tmp.name
