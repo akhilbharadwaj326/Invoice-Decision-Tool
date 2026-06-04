@@ -272,7 +272,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
                     'ARCHIVE',
                     'EXPORT_REPORT',
                     'USER_CREATE', 'USER_UPDATE', 'USER_DEACTIVATE',
-                    'RULE_UPDATE',
+                    'RULE_CREATE', 'RULE_UPDATE',
                     'VENDOR_CREATE', 'VENDOR_UPDATE'
                 )),
     invoice_id  UUID REFERENCES invoices(id) ON DELETE SET NULL,
@@ -331,7 +331,7 @@ ON CONFLICT (rule_code) DO NOTHING;
 -- =============================================================================
 INSERT INTO users (name, email, password_hash, role, is_active) VALUES
     ('System Admin', 'admin@invoicetool.com',
-     '$2b$12$LJ3m4ys4z1qFz5e5B5K5eOQYK0z1Z5Y5J5R5P5N5T5V5X5D5H5F5a',
+     '$2b$12$UilG.gD/v9QTAd3oBUSnS.ISsTGFRkSXfM877llJO5Q6zaKdeFHf6',
      'ADMIN', TRUE)
 ON CONFLICT (email) DO NOTHING;
 

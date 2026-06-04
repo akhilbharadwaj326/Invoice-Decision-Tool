@@ -17,7 +17,7 @@ from sqlalchemy import select
 
 from app.core.config import get_settings
 from app.models.models import Invoice, OcrExtraction, Vendor, InvoiceLineItem
-from app.services.storage_service import LOCAL_UPLOAD_DIR
+from app.services.storage_service import materialize_file
 from openai import AsyncOpenAI
 
 settings = get_settings()
@@ -86,12 +86,7 @@ async def process_invoice_ocr(invoice_id: uuid.UUID, db_session_maker) -> None:
             return
 
         try:
-            # For now, file_path is expected to be a local path if we use fallback
-            # If using Supabase, we would download the file to a temp path first.
-            # Assuming local fallback is active for local testing:
-            file_path = invoice.file_path
-            if not os.path.exists(file_path):
-                raise FileNotFoundError(f"File {file_path} not found locally.")
+            file_path, temp_path = await materialize_file(invoice.file_path)
 
             # Get base64 images
             if file_path.lower().endswith(".pdf"):
@@ -184,3 +179,9 @@ async def process_invoice_ocr(invoice_id: uuid.UUID, db_session_maker) -> None:
             invoice.invoice_notes = f"OCR Failed: {str(e)}"
             await db.commit()
             print(f"OCR Error for invoice {invoice_id}: {e}")
+        finally:
+            if "temp_path" in locals() and temp_path:
+                try:
+                    os.unlink(temp_path)
+                except OSError:
+                    pass

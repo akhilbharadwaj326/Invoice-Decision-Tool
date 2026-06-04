@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, Link } from "react-router-dom";
 import { useAppDispatch } from "@/app/hooks";
 import { setCredentials } from "@/features/auth/authSlice";
+import { useLoginMutation } from "@/features/api/authApi";
 
 import {
   Form,
@@ -27,6 +28,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export function Login() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [login, { isLoading, error }] = useLoginMutation();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -37,17 +39,19 @@ export function Login() {
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    // Mock login for UI development
-    setTimeout(() => {
+    try {
+      const response = await login(data).unwrap();
       dispatch(
         setCredentials({
-          user: { name: "System Admin", email: data.email },
-          token: "mock-jwt-token-123",
-          role: "ADMIN",
+          user: { name: response.user.name, email: response.user.email },
+          token: response.access_token,
+          role: response.user.role,
         })
       );
       navigate("/");
-    }, 1000);
+    } catch (err) {
+      console.error("Login failed", err);
+    }
   };
 
   return (
@@ -123,11 +127,16 @@ export function Login() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full h-12 text-base font-medium flex items-center justify-center gap-2 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Signing in..." : (
+              <Button type="submit" className="w-full h-12 text-base font-medium flex items-center justify-center gap-2 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all" disabled={isLoading || form.formState.isSubmitting}>
+                {(isLoading || form.formState.isSubmitting) ? "Signing in..." : (
                   <>Sign in <ArrowRight className="w-4 h-4 ml-1" /></>
                 )}
               </Button>
+              {error && (
+                <div className="text-red-500 text-sm mt-2 text-center font-medium">
+                  Login failed. Please check your credentials.
+                </div>
+              )}
             </form>
           </Form>
 

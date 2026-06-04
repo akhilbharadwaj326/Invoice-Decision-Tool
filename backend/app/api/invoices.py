@@ -100,14 +100,26 @@ async def list_invoices(
     current_user: CurrentUser,
     db: AsyncSession = Depends(get_db),
     status: Optional[str] = Query(None, description="Filter by status"),
+    search: Optional[str] = Query(None, description="Search by vendor name, reference, or invoice number"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100)
 ):
-    """List invoices with pagination and optional status filter."""
+    """List invoices with pagination, optional status filter, and text search."""
+    from sqlalchemy import or_
     query = select(Invoice).options(selectinload(Invoice.vendor), selectinload(Invoice.risk_assessment))
     
     if status:
         query = query.where(Invoice.status == status)
+    
+    if search:
+        search_term = f"%{search}%"
+        query = query.where(
+            or_(
+                Invoice.system_reference.ilike(search_term),
+                Invoice.vendor_name_raw.ilike(search_term),
+                Invoice.vendor_invoice_number.ilike(search_term),
+            )
+        )
         
     # Count total
     count_query = select(func.count()).select_from(query.subquery())
@@ -167,12 +179,14 @@ async def get_invoice_detail(
     
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
-        
-    # Inject signed URL for frontend viewing
-    invoice_dict = invoice.__dict__.copy()
-    invoice_dict["file_path"] = await get_file_url(invoice.file_path)
-    
-    return invoice_dict
+
+    # Build response using Pydantic schema (avoids _sa_instance_state serialization issues)
+    response = InvoiceDetailResponse.model_validate(invoice)
+    # Override file_path with signed URL (or local path)
+    signed_url = await get_file_url(invoice.file_path)
+    response = response.model_copy(update={"file_path": signed_url})
+
+    return response
 
 
 @router.patch("/{invoice_id}/archive", response_model=MessageResponse)

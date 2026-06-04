@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, Link } from "react-router-dom";
 import { useAppDispatch } from "@/app/hooks";
 import { setCredentials } from "@/features/auth/authSlice";
+import { useSignupMutation } from "@/features/api/authApi";
 
 import {
   Form,
@@ -33,6 +34,7 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 export function Signup() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [signup, { isLoading, error }] = useSignupMutation();
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
@@ -45,20 +47,19 @@ export function Signup() {
   });
 
   const onSubmit = async (data: SignupFormValues) => {
-    // TODO: Replace with actual RTK Query API call
-    console.log("Signup data:", data);
-    
-    // Mock signup for UI development
-    setTimeout(() => {
+    try {
+      const response = await signup({ name: data.name, email: data.email, password: data.password }).unwrap();
       dispatch(
         setCredentials({
-          user: { name: data.name, email: data.email },
-          token: "mock-jwt-token-123",
-          role: "REVIEWER", // Default role
+          user: { name: response.user.name, email: response.user.email },
+          token: response.access_token,
+          role: response.user.role,
         })
       );
       navigate("/");
-    }, 1000);
+    } catch (err) {
+      console.error("Signup failed", err);
+    }
   };
 
   return (
@@ -131,10 +132,15 @@ export function Signup() {
                   )}
                 />
               </div>
-              <Button type="submit" className="w-full mt-6" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Creating account..." : "Sign up"}
-              </Button>
-            </form>
+              <Button type="submit" className="w-full mt-6" disabled={isLoading || form.formState.isSubmitting}>
+                  {(isLoading || form.formState.isSubmitting) ? "Creating account..." : "Sign up"}
+                </Button>
+                {error && (
+                  <div className="text-red-500 text-sm mt-2 text-center font-medium">
+                    Signup failed. Please try again.
+                  </div>
+                )}
+              </form>
           </Form>
         </CardContent>
         <CardFooter className="flex justify-center border-t pt-6">

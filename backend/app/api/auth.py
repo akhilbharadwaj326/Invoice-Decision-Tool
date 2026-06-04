@@ -16,13 +16,13 @@ from app.core.database import get_db
 from app.core.deps import CurrentUser
 from app.core.security import create_access_token, hash_password, verify_password
 from app.models.models import User
-from app.schemas.schemas import LoginRequest, MeResponse, SignupRequest, TokenResponse
+from app.schemas.schemas import LoginRequest, MeResponse, SignupRequest, TokenResponse, UserResponse, ProfileUpdateRequest
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 settings = get_settings()
 
 
-@router.post("/signup", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/signup", response_model=MeResponse, status_code=status.HTTP_201_CREATED)
 async def signup(user_in: SignupRequest, db: AsyncSession = Depends(get_db)):
     """Register a new user with default role 'REVIEWER'."""
     # Check if user exists
@@ -50,11 +50,11 @@ async def signup(user_in: SignupRequest, db: AsyncSession = Depends(get_db)):
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
+        "user": user
     }
 
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=MeResponse)
 async def login(credentials: LoginRequest, db: AsyncSession = Depends(get_db)):
     """Authenticate with JSON payload."""
     result = await db.execute(select(User).where(User.email == credentials.email))
@@ -75,7 +75,7 @@ async def login(credentials: LoginRequest, db: AsyncSession = Depends(get_db)):
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
+        "user": user
     }
 
 
@@ -113,6 +113,23 @@ async def get_me(current_user: CurrentUser):
         "access_token": access_token,
         "token_type": "bearer"
     }
+
+
+@router.patch("/profile", response_model=UserResponse)
+async def update_profile(
+    payload: ProfileUpdateRequest,
+    current_user: CurrentUser,
+    db: AsyncSession = Depends(get_db)
+):
+    """Update current user profile (name and/or password)."""
+    if payload.name:
+        current_user.name = payload.name
+    if payload.password:
+        current_user.password_hash = hash_password(payload.password)
+    
+    await db.commit()
+    await db.refresh(current_user)
+    return current_user
 
 
 @router.post("/logout", status_code=204)

@@ -2,6 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
+import { useGetDashboardStatsQuery } from "@/features/api/adminApi";
+
 const data = [
   { name: 'Mon', invoices: 14 },
   { name: 'Tue', invoices: 27 },
@@ -13,6 +15,8 @@ const data = [
 ];
 
 export function Dashboard() {
+  const { data: stats, isLoading } = useGetDashboardStatsQuery({});
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
@@ -29,10 +33,7 @@ export function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-extrabold text-slate-900">1,284</div>
-            <p className="text-xs font-semibold text-green-600 mt-1 flex items-center">
-              +12% <span className="text-slate-400 font-medium ml-1">from last month</span>
-            </p>
+            <div className="text-3xl font-extrabold text-slate-900">{isLoading ? "..." : (stats?.total_invoices || 0)}</div>
           </CardContent>
         </Card>
         
@@ -44,7 +45,7 @@ export function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-extrabold text-slate-900">42</div>
+            <div className="text-3xl font-extrabold text-slate-900">{isLoading ? "..." : (stats?.pending_review || 0)}</div>
             <p className="text-xs font-medium text-slate-400 mt-1">Requires manual attention</p>
           </CardContent>
         </Card>
@@ -57,23 +58,23 @@ export function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-extrabold text-slate-900">84%</div>
+            <div className="text-3xl font-extrabold text-slate-900">{isLoading ? "..." : `${Number(stats?.approval_rate || 0).toFixed(2)}%`}</div>
             <p className="text-xs font-semibold text-green-600 mt-1 flex items-center">
-              +2.4% <span className="text-slate-400 font-medium ml-1">approval rate this week</span>
+              approval rate
             </p>
           </CardContent>
         </Card>
 
         <Card className="border border-slate-100 shadow-sm shadow-slate-200/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-bold text-slate-500">High Risk</CardTitle>
+            <CardTitle className="text-sm font-bold text-slate-500">High Risk Flags</CardTitle>
             <div className="p-2 bg-red-50 text-red-600 rounded-lg">
               <AlertTriangle className="h-4 w-4" strokeWidth={2.5} />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-extrabold text-red-600">7</div>
-            <p className="text-xs font-medium text-slate-400 mt-1">Blocked by AI risk rules</p>
+            <div className="text-3xl font-extrabold text-slate-900">{isLoading ? "..." : (stats?.high_risk || 0)}</div>
+            <p className="text-xs font-medium text-slate-400 mt-1">Require immediate attention</p>
           </CardContent>
         </Card>
       </div>

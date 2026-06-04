@@ -1,7 +1,7 @@
-import { LogOut } from 'lucide-react';
+import { LogOut, Settings } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { logout } from '@/features/auth/authSlice';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 export function Topbar() {
   const dispatch = useAppDispatch();
@@ -25,6 +25,13 @@ export function Topbar() {
           {user?.name ? user.name.charAt(0) : 'A'}
         </div>
         <div className="w-px h-8 bg-slate-200 mx-2"></div>
+        <Link 
+          to="/settings"
+          className="p-2.5 text-slate-400 hover:text-primary transition-all rounded-xl hover:bg-primary/5"
+          title="Settings"
+        >
+          <Settings size={18} strokeWidth={2.5} />
+        </Link>
         <button 
           onClick={handleLogout}
           className="p-2.5 text-slate-400 hover:text-red-500 transition-all rounded-xl hover:bg-red-50"
